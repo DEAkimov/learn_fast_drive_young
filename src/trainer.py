@@ -106,10 +106,10 @@ class Trainer:
         # flip actions
         flipped_actions = []
         for a in actions:
-            if a == 0:
-                flipped_actions.append(1)
-            if a == 1:
-                flipped_actions.append(0)
+            if a == 0.0:
+                flipped_actions.append(1.0)
+            elif a == 1.0:
+                flipped_actions.append(0.0)
             else:
                 flipped_actions.append(a)
         actions = np.concatenate((actions, np.array(flipped_actions)), axis=0)
