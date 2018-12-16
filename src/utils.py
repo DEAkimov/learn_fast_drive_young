@@ -20,6 +20,11 @@ class EnvWrapper(gym.ObservationWrapper):
             dtype=np.float32
         )
 
+    @staticmethod
+    def on_grass(observation):
+        """Accept raw observation"""
+        return observation[60:-20, 40:56, 1].mean() > 165.0
+
     def observation(self, observation):
         # Gray = .299R + .587G + .114B
         observation = 2.0 * (observation / 255.0) - 1.0  # [0, 255] -> [-1.0, 1.0]
@@ -49,6 +54,8 @@ class EnvWrapper(gym.ObservationWrapper):
                 # self.reset()
                 break
         # noinspection PyUnboundLocalVariable
+        if self.on_grass(env_obs):
+            reward -= 0.1
         return np.array(step_frames), reward, done, info
 
     def reset(self):
