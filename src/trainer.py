@@ -95,6 +95,29 @@ class Trainer:
         self.writer.add_scalar('batch_reward', mean_reward, step)
         self.writer.add_scalar('epsilon', epsilon, step)
 
+    @staticmethod
+    def flip_batch(batch):
+        observations, actions, rewards, next_observations, is_done = batch
+        # flip observations
+        flipped_obs = observations[:, :, :, ::-1]
+        observations = np.concatenate((observations, flipped_obs), axis=0)
+        flipped_next_obs = next_observations[:, :, :, ::-1]
+        next_observations = np.concatenate((next_observations, flipped_next_obs), axis=0)
+        # flip actions
+        flipped_actions = []
+        for a in actions:
+            if a == 0:
+                flipped_actions.append(1)
+            if a == 1:
+                flipped_actions.append(0)
+            else:
+                flipped_actions.append(a)
+        actions = np.concatenate((actions, np.array(flipped_actions)), axis=0)
+        # stack rewards and done
+        rewards = np.concatenate((rewards, rewards), axis=0)
+        is_done = np.concatenate((is_done, is_done), axis=0)
+        return observations, actions, rewards, next_observations, is_done
+
     def train(self, num_epochs, num_steps, batch_size, save_freq):
         """main function of the class
 
@@ -126,6 +149,7 @@ class Trainer:
 
                 # sample some experience for training from the buffer
                 batch = self.experience_replay.sample(batch_size)
+                batch = self.flip_batch(batch)
                 loss = self.train_step(batch)
 
                 # update writer statistics
