@@ -16,7 +16,7 @@ if __name__ == '__main__':
     }
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     agent = Agent(device)
-    checkpoint = 'logs/t4/epoch_99.pth'
+    checkpoint = 'logs/exp_1/epoch_9.pth'
     agent.load(checkpoint)
     agent.eval()
     n_episodes = 3

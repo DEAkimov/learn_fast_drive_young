@@ -55,7 +55,8 @@ class EnvWrapper(gym.ObservationWrapper):
                 break
         # noinspection PyUnboundLocalVariable
         if self.on_grass(env_obs):
-            reward -= 0.1
+            done = True
+            reward -= 5.0
         return np.array(step_frames), reward, done, info
 
     def reset(self):

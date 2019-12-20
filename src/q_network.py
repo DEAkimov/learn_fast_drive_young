@@ -12,17 +12,11 @@ class DQN(nn.Module):
             nn.Dropout(0.5),
             nn.Conv2d(64, 64, 3, 1), nn.ReLU()
         )
-        # for param in self.conv.parameters():
-        #     param.requires_grad = False
         self.advantage = nn.Sequential(
-            # nn.Linear(7 * 7 * 64, 512), nn.ReLU(),
-            # nn.Linear(512, 5)
             NoisyLinear(7 * 7 * 64, 512), nn.ReLU(),
             NoisyLinear(512, 5)
         )
         self.value = nn.Sequential(
-            # nn.Linear(7 * 7 * 64, 512), nn.ReLU(),
-            # nn.Linear(512, 1)
             NoisyLinear(7 * 7 * 64, 512), nn.ReLU(),
             NoisyLinear(512, 1)
         )

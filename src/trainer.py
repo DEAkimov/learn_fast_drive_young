@@ -56,7 +56,7 @@ class Trainer:
 
     def test_reward(self, step):
         test_reward = sum([self.test_performance() for _ in range(self.num_tests)])
-        self.writer.add_scalar('test_reward', test_reward / self.num_tests, step + 137)
+        self.writer.add_scalar('test_reward', test_reward / self.num_tests, step)
 
     def fill_buffer(self, batch_size):
         observation = self.train_environment.reset()
@@ -97,6 +97,11 @@ class Trainer:
 
     @staticmethod
     def flip_batch(batch):
+        def flip_action(action):
+            if action >= 2.0:
+                return action
+            else:
+                return 1.0 - action
         observations, actions, rewards, next_observations, is_done = batch
         # flip observations
         flipped_obs = observations[:, :, :, ::-1]
@@ -104,14 +109,7 @@ class Trainer:
         flipped_next_obs = next_observations[:, :, :, ::-1]
         next_observations = np.concatenate((next_observations, flipped_next_obs), axis=0)
         # flip actions
-        flipped_actions = []
-        for a in actions:
-            if a == 0.0:
-                flipped_actions.append(1.0)
-            elif a == 1.0:
-                flipped_actions.append(0.0)
-            else:
-                flipped_actions.append(a)
+        flipped_actions = [flip_action(a) for a in actions]
         actions = np.concatenate((actions, np.array(flipped_actions)), axis=0)
         # stack rewards and done
         rewards = np.concatenate((rewards, rewards), axis=0)
@@ -160,12 +158,12 @@ class Trainer:
                 # write logs
                 if done:
                     episodes_done += 1
-                    self.writer.add_scalar('train_episode_reward', episode_reward, episodes_done + 568)
+                    self.writer.add_scalar('train_episode_reward', episode_reward, episodes_done)
                     episode_reward = 0
 
                 if (epoch * num_steps + step) % self.write_frequency == 0:
                     d = self.write_frequency  # 'd' stands for 'denominator'
-                    log_step = (epoch * num_steps + step) // d + 6858
+                    log_step = (epoch * num_steps + step) // d
                     self.write_logs(mean_loss / d, mean_reward / d, epsilon, log_step)
                     mean_loss, mean_reward = 0.0, 0.0
 

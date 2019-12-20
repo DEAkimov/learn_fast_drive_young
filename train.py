@@ -11,9 +11,8 @@ if __name__ == '__main__':
     exp_replay = ExperienceReplay(10_000, train_env.observation_space.shape)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     agent = Agent(device)
-    agent.load('logs/t4/epoch_99.pth')
     optimizer = torch.optim.SGD(agent.parameters(), 1e-4)
-    logdir = 'logs/grass_p/'
+    logdir = 'logs/exp_1/'
     writer = SummaryWriter(logdir)
     trainer = Trainer(train_env, test_env, 1, exp_replay, agent, optimizer, logdir, writer, 20)
 
